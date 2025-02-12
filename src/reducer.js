@@ -1,5 +1,5 @@
 // Определяем редюсер (функцию, которая обновляет состояние в зависимости от типа действия)
-const reducer2 = (state = 0, action) => {
+const reducer = (state = 5, action) => {
     // Используем конструкцию switch для обработки различных типов действий
     switch (action.type) {
         case 'INC': // Если тип действия 'INC' (increment - увеличение)
@@ -15,4 +15,4 @@ const reducer2 = (state = 0, action) => {
     }
 };
 
-export default reducer2
+export default reducer
