@@ -1,6 +1,8 @@
 console.log('Hello')
 // Импортируем функцию для создания хранилища из Redux
-import { legacy_createStore as createStore } from 'redux';
+import { legacy_createStore as createStore, bindActionCreators} from 'redux';
+import reducer2 from './reducer';
+import {inc, dec, rnd, rndm} from './action';
 
 
 // Определяем начальное состояние (число 0)
@@ -38,62 +40,38 @@ state = reducer(state, {type: 'INC'});
 console.log(state); // Выведет 2
 
 
-
-
-
 console.log('Hello redux')
 
 
-
-
-
-
-// Определяем редюсер (функцию, которая обновляет состояние в зависимости от типа действия)
-const reducer2 = (state = 0, action) => {
-    // Используем конструкцию switch для обработки различных типов действий
-    switch (action.type) {
-        case 'INC': // Если тип действия 'INC' (increment - увеличение)
-            return state + 1; // Увеличиваем состояние на 1 и возвращаем новое состояние
-        case 'DEC': // Если тип действия 'DEC' (decrement - уменьшение)
-            return state - 1; // Уменьшаем состояние на 1 и возвращаем новое состояние
-        case 'RND': // Если тип действия 'RND' (random - случайное значение)
-            return state + action.value; // Прибавляем к состоянию случайное число из action.value
-        case 'RNDM': // Если тип действия 'RND' (random - случайное значение)
-            return state - action.value; // Убавляем к состоянию случайное число из action.value
-        default: // Если передан неизвестный тип действия
-            return state; // Оставляем состояние без изменений
-    }
-};
-
-// Функции-экшн-криэйторы (создают объекты действий)
-const inc = () => ({ type: 'INC' }); // Функция для увеличения состояния
-const dec = () => ({ type: 'DEC' }); // Функция для уменьшения состояния
-const rnd = (value) => ({ type: 'RND', value }); // Функция для добавления случайного числа
-const rndm = (value) => ({ type: 'RNDM', value }); // Функция для добавления случайного числа
-
 // Создаем хранилище с использованием `createStore` и передаем наш редюсер
 const store = createStore(reducer2);
+const {dispatch} = store;
+
+// const bindActionCreator = (creator, dispatch) => (...args) => {
+//     dispatch(creator(...args));
+// }
+
+const incDispatch = bindActionCreators(inc, dispatch);
+const decDispatch = bindActionCreators(dec, dispatch);
+const rndDispatch = bindActionCreators(rnd, dispatch);
+const rndmDispatch= bindActionCreators(rndm, dispatch);
 
 // Добавляем обработчик событий на кнопку с id="inc"
-document.getElementById('inc').addEventListener('click', () => {
-    store.dispatch(inc()); // Диспатчим (отправляем) действие увеличения
-});
+document.getElementById('inc').addEventListener('click', incDispatch); // Диспатчим (отправляем) действие увеличения
 
 // Добавляем обработчик событий на кнопку с id="dec"
-document.getElementById('dec').addEventListener('click', () => {
-    store.dispatch(dec()); // Диспатчим действие уменьшения
-});
+document.getElementById('dec').addEventListener('click', decDispatch); // Диспатчим действие уменьшения
 
 // Добавляем обработчик событий на кнопку с id="rnd"
 document.getElementById('rnd').addEventListener('click', () => {
     const value = Math.floor(Math.random() * 10); // Генерируем случайное число от 0 до 9
-    store.dispatch(rnd(value)); // Диспатчим действие с этим числом
+    rndDispatch(value) // Диспатчим действие с этим числом
 });
 
 // Добавляем обработчик событий на кнопку с id="rnd"
 document.getElementById('rndm').addEventListener('click', () => {
     const value = Math.floor(Math.random() * 10); // Генерируем случайное число от 0 до 9
-    store.dispatch(rndm(value)); // Диспатчим действие с этим числом
+    rndmDispatch(value) // Диспатчим действие с этим числом
 });
 
 // Функция обновления интерфейса (обновляет текстовое содержимое счетчика)
